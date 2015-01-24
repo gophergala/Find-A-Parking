@@ -1,10 +1,19 @@
 {{ define "base" }}
 	<html>
 		<head>
-			{{ template "css" .}}
-			{{ template "js" .}}
+			
 			<meta charset="UTF-8">
-			<title>{{ .Titulo }}</title>
+			<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  			<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  			<title>{{ .Titulo }}</title>
+  			<link rel="stylesheet" type="text/css" href="/media/css/semantic.min.css">
+  			{{ template "css" .}}
+  
+
+			<script src="/media/js/jquery.js"></script>
+			<script src="/media/js/semantic.min.js"></script>
+			{{ template "js" .}}
+			
 		</head>
 		<body>
         	{{ template "content" .}}
