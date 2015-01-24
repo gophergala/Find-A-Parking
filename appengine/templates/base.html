@@ -1,0 +1,14 @@
+{{ define "base" }}
+	<html>
+		<head>
+			{{ template "css" .}}
+			{{ template "js" .}}
+			<meta charset="UTF-8">
+			<title>{{ .Titulo }}</title>
+		</head>
+		<body>
+        	{{ template "content" .}}
+
+		</body>
+	</html>
+{{ end }}
