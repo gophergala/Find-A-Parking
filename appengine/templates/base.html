@@ -9,15 +9,16 @@
   			<link rel="stylesheet" type="text/css" href="/media/css/semantic.min.css">
   			{{ template "css" .}}
   
-
+  			<script type="text/javascript" src="/_ah/channel/jsapi"></script>
 			<script src="/media/js/jquery.js"></script>
 			<script src="/media/js/semantic.min.js"></script>
-			{{ template "js" .}}
 			
+
 		</head>
 		<body>
         	{{ template "content" .}}
 
 		</body>
+		{{ template "js" .}}
 	</html>
 {{ end }}

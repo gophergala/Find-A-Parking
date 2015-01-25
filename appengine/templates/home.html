@@ -1,9 +1,8 @@
 {{ define "css" }}
     
 {{ end }}
-{{ define "js" }}
-     
-{{ end }}
+
+
 {{ define "content" }}
     <div class="ui menu">
 	  <a class="active item">
@@ -13,4 +12,18 @@
 	    <i class="building icon"></i> Rent
 	  </a>
 	</div>
+	<div class="ui grid">
+	    <div class="six wide column">
+	    	
+	    </div>
+	    <div id="map" class="ten wide column">
+	    	
+	    </div>
+  	</div>
+	<label id="token" hidden>{{ .Token }}</label>
+
+{{ end }}
+
+{{ define "js" }}
+    <script type="text/javascript" src="http://icalialabs.github.io/dmaps/dmaps.js"></script>
 {{ end }}
