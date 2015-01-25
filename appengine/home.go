@@ -9,6 +9,7 @@ import (
     "fmt"
     "encoding/json"
     "appengine/channel"
+    "strconv"
 )
 
 
@@ -27,8 +28,9 @@ func (r Response) String() (s string) {
 type Parking struct {
 	Owner string
 	Mail string
-	Price float32
+	Price float64
 	Location appengine.GeoPoint
+	Recorded time.Time
 }
 
 type Transactions struct {
@@ -42,7 +44,20 @@ func init() {
 	http.HandleFunc("/",index)
 	http.HandleFunc("/home",home)
 	http.HandleFunc("/rent",rent)
+	http.HandleFunc("/createPark",createParking)
+	http.HandleFunc("/getToken",getToken)
 
+}
+
+func getToken(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	token, err := channel.Create(c, "customer")
+	if err != nil {
+	    token = ""
+	}
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, Response{"token": token})
+    return
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
@@ -80,17 +95,10 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func rent(w http.ResponseWriter, r *http.Request) {
-	c := appengine.NewContext(r)
-
-	parking := &Parking{
-		Owner:	"",
-		Mail:	"",
-		Price:	25.6,
-	}
+	
 
 	d := map[string]interface{}{"Titulo": "Rent"}
 
-	channel.SendJSON(c, "customer", parking)
 
   	t, err := template.ParseFiles("templates/renta.html", "templates/base.html")
   	if err != nil {
@@ -105,11 +113,16 @@ func rent(w http.ResponseWriter, r *http.Request) {
 
 func createParking(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
-
+	price, _ := strconv.ParseFloat(r.FormValue("price"), 32)
+	lat, _ := strconv.ParseFloat(r.FormValue("lat"), 64)
+	lng, _ := strconv.ParseFloat(r.FormValue("lng"), 64)
+	geo := appengine.GeoPoint{Lat: lat,Lng: lng}
 	parking := &Parking{
-		Owner:	"",
-		Mail:	"",
-		Price:	25.6,
+		Owner:	r.FormValue("name"),
+		Mail:	r.FormValue("email"),
+		Price:	price,
+		Location: geo,
+		Recorded: time.Now(),
 	}
 
 	key := datastore.NewIncompleteKey(c, "Parking", nil);
@@ -117,7 +130,7 @@ func createParking(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 	    http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	
+	channel.SendJSON(c, "customer", parking)
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(w, Response{"success": err == nil})
     return
