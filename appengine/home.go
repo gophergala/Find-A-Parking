@@ -41,6 +41,8 @@ type Transactions struct {
 func init() {
 	http.HandleFunc("/",index)
 	http.HandleFunc("/home",home)
+	http.HandleFunc("/rent",rent)
+
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
@@ -78,9 +80,18 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func rent(w http.ResponseWriter, r *http.Request) {
-	
+	c := appengine.NewContext(r)
+
+	parking := &Parking{
+		Owner:	"",
+		Mail:	"",
+		Price:	25.6,
+	}
 
 	d := map[string]interface{}{"Titulo": "Rent"}
+
+	channel.SendJSON(c, "customer", parking)
+
   	t, err := template.ParseFiles("templates/renta.html", "templates/base.html")
   	if err != nil {
     	http.Error(w, err.Error(), http.StatusInternalServerError)
