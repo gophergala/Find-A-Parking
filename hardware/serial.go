@@ -3,6 +3,7 @@ package main
 import (
       "github.com/tarm/goserial"
       "log"
+      "net/http"
 )
 
 func main() {
@@ -17,12 +18,20 @@ func main() {
 
   n := 0
   buf := make([]byte, 256)
-  n, err = s.Read(buf)
-  if err != nil {
-    log.Fatal(err)
+  for {
+    n, err = s.Read(buf)
+    if err != nil {
+      log.Fatal(err)
+       s.Close()
+       break;
+    }
+    if n>10 {
+      resp, _ := http.Get("http://findaparking.appspot.com/parkAuto")
+    }
+    time.Sleep(3000 * time.Millisecond)
   }
+  
       
-  log.Print(n)
 
-  s.Close()
+ 
 }

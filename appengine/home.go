@@ -47,6 +47,27 @@ func init() {
 	http.HandleFunc("/createPark",createParking)
 	http.HandleFunc("/getToken",getToken)
 	http.HandleFunc("/getParkings",getParkings)
+	http.HandleFunc("/parkAuto",parkAuto)
+}
+
+func parkAuto(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	price, _ := strconv.ParseFloat("50", 64)
+	lat, _ := strconv.ParseFloat("25.670708", 64)
+	lng, _ := strconv.ParseFloat("-100.308172", 64)
+	geo := appengine.GeoPoint{Lat: lat,Lng: lng}
+	parking := &Parking{
+		Owner:	"Garces Parks",
+		Mail:	"garces@parks.com",
+		Price:	price,
+		Location: geo,
+		Recorded: time.Now(),
+	}
+
+	channel.SendJSON(c, "customer", parking)
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, Response{"success": "ok"})
+    return
 
 }
 
@@ -124,7 +145,7 @@ func rent(w http.ResponseWriter, r *http.Request) {
 
 func createParking(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
-	price, _ := strconv.ParseFloat(r.FormValue("price"), 32)
+	price, _ := strconv.ParseFloat(r.FormValue("price"), 64)
 	lat, _ := strconv.ParseFloat(r.FormValue("lat"), 64)
 	lng, _ := strconv.ParseFloat(r.FormValue("lng"), 64)
 	geo := appengine.GeoPoint{Lat: lat,Lng: lng}
