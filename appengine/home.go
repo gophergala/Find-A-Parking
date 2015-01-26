@@ -46,7 +46,18 @@ func init() {
 	http.HandleFunc("/rent",rent)
 	http.HandleFunc("/createPark",createParking)
 	http.HandleFunc("/getToken",getToken)
+	http.HandleFunc("/getParkings",getParkings)
 
+}
+
+func getParkings(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	q := datastore.NewQuery("Parking")
+	var parkings []Parking
+	q.GetAll(c, &parkings)
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, Response{"parkings": parkings})
+	return
 }
 
 func getToken(w http.ResponseWriter, r *http.Request) {
